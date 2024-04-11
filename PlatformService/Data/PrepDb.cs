@@ -28,6 +28,18 @@ namespace PlatformService.Data
                             Name = "Dot Net",
                             Publisher = "Microsoft",
                             Cost = "Free"
+                        },
+                        new Platform()
+                        {
+                            Name = "Sql Server Express",
+                            Publisher = "Microsoft",
+                            Cost = "Free"
+                        },
+                        new Platform()
+                        {
+                            Name = "Kubernetes",
+                            Publisher = "Cloud Native Computing Foundation",
+                            Cost = "Free"
                         }
                     );
 
