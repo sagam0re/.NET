@@ -19,11 +19,5 @@ namespace CommandsService.Controllers
 
             return Ok("Inbound test of from platforms controller");
         }
-        
-        [HttpGet]
-        public ActionResult GetCommands()
-        {
-            return Ok("Returned Commands");
-        }
     }
 }
