@@ -1,5 +1,8 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+using CommandsService.Data;
+
 
 namespace CommandsService.Controllers
 {
@@ -7,9 +10,13 @@ namespace CommandsService.Controllers
     [ApiController]
     public class PlatformsController : ControllerBase
 	{
-        public PlatformsController()
+        private readonly ICommandRepo _repository;
+        private readonly IMapper _mapper;
+
+        public PlatformsController(ICommandRepo repository, IMapper mapper)
         {
-            
+            _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpPost]
