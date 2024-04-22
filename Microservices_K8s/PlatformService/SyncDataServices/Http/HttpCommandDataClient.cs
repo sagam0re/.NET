@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using PlatformService.Dtos;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using PlatformService.Dtos;
 
 namespace PlatformService.SyncDataServices.Http
 {
@@ -19,12 +19,13 @@ namespace PlatformService.SyncDataServices.Http
             _configuration = configuration;
         }
 
-        public async Task SendPlatformToCommand(PlatformReadDto platformReadDto)
+
+        public async Task SendPlatformToCommand(PlatformReadDto plat)
         {
             var httpContent = new StringContent(
-                    JsonSerializer.Serialize(platformReadDto),
-                    Encoding.UTF8,
-                    "application/json");
+                JsonSerializer.Serialize(plat),
+                Encoding.UTF8,
+                "application/json");
 
             var response = await _httpClient.PostAsync($"{_configuration["CommandService"]}", httpContent);
 
@@ -34,7 +35,7 @@ namespace PlatformService.SyncDataServices.Http
             }
             else
             {
-                Console.WriteLine("--> Sync POST to CommandService was not OK!");
+                Console.WriteLine("--> Sync POST to CommandService was NOT OK!");
             }
         }
     }
