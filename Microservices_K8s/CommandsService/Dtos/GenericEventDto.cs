@@ -1,4 +1,4 @@
-namespace CommandsServices.Dtos
+namespace CommandsService.Dtos
 {
 	public class GenericEventDto
 	{
