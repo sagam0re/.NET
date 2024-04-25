@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using CommandsService.Data;
+using CommandsService.EventProcessing;
 
 namespace CommandsService
 {
@@ -30,6 +31,8 @@ namespace CommandsService
             services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMemory"));
             services.AddScoped<ICommandRepo, CommandRepo>();
             services.AddControllers();
+
+            services.AddSingleton<IEventProcessor, EventProcessor>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
