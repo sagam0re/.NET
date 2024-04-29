@@ -28,10 +28,12 @@ namespace CommandsService.AsyncDataServices
 
         private void InitializeRabbitMQ()
         {
+            int port = int.Parse(_configuration["RabbitMQPort"]);
+
             var factory = new ConnectionFactory()
             {
                 HostName = _configuration["RabbitMQHost"],
-                Port = int.Parse(_configuration["RabbitMQPort"])
+                Port = port
             };
 
             _connection = factory.CreateConnection();
