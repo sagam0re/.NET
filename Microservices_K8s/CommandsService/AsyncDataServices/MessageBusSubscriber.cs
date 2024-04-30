@@ -28,13 +28,8 @@ namespace CommandsService.AsyncDataServices
 
         private void InitializeRabbitMQ()
         {
-            int port = int.Parse(_configuration["RabbitMQPort"]);
 
-            var factory = new ConnectionFactory()
-            {
-                HostName = _configuration["RabbitMQHost"],
-                Port = port
-            };
+            var factory = new ConnectionFactory() { HostName = "rabbitmq-clusterip-srv", Port = 5672 };
 
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
@@ -68,12 +63,12 @@ namespace CommandsService.AsyncDataServices
             return Task.CompletedTask;
         }
 
-        private void RabbitMQ_ConnectionShutdown (object sender, ShutdownEventArgs e)
+        private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
         {
             Console.WriteLine("--> Connection Shutdown");
         }
 
-        public override void Dispose ()
+        public override void Dispose()
         {
             if (_channel.IsOpen)
             {
@@ -81,7 +76,7 @@ namespace CommandsService.AsyncDataServices
                 _connection.Close();
             }
 
-            base.Dispose ();
+            base.Dispose();
         }
     }
 }
