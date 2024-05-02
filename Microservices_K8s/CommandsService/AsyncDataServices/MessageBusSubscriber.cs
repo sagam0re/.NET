@@ -44,6 +44,7 @@ namespace CommandsService.AsyncDataServices
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            Console.WriteLine("TEST --> started ExecuteAsync method")
             stoppingToken.ThrowIfCancellationRequested();
 
             var consumer = new EventingBasicConsumer(_channel);
