@@ -24,3 +24,5 @@ spec:
                 name: commands-clusterip-srv
                 port:
                   number: 80
+
+              
