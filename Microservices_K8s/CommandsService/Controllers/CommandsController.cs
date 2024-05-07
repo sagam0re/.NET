@@ -1,23 +1,23 @@
 using System;
-using AutoMapper;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 using CommandsService.Data;
 using CommandsService.Dtos;
 using CommandsService.Models;
+using Microsoft.AspNetCore.Mvc;
 
-namespace CommandsController.Controllers
+namespace CommandsService.Controllers
 {
-    [Route("api/c/platforms/{platformId}/[controller]/[action]")]
+    [Route("api/c/platforms/{platformId}/[controller]")]
     [ApiController]
     public class CommandsController : ControllerBase
     {
         private readonly ICommandRepo _repository;
         private readonly IMapper _mapper;
 
-        public CommandsController(ICommandRepo reposiotory, IMapper mapper)
+        public CommandsController(ICommandRepo repository, IMapper mapper)
         {
-            _repository = reposiotory;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -26,29 +26,29 @@ namespace CommandsController.Controllers
         {
             Console.WriteLine($"--> Hit GetCommandsForPlatform: {platformId}");
 
-            if(!_repository.PlatformExists(platformId))
+            if (!_repository.PlaformExits(platformId))
             {
                 return NotFound();
             }
 
-            var commads = _repository.GetCommandsForPlatform(platformId);
+            var commands = _repository.GetCommandsForPlatform(platformId);
 
-            return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commads));
+            return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commands));
         }
 
         [HttpGet("{commandId}", Name = "GetCommandForPlatform")]
-        public ActionResult<CommandReadDto> GetCommandForPlatform(int platformId,int commandId)
+        public ActionResult<CommandReadDto> GetCommandForPlatform(int platformId, int commandId)
         {
             Console.WriteLine($"--> Hit GetCommandForPlatform: {platformId} / {commandId}");
 
-            if (!_repository.PlatformExists(platformId))
+            if (!_repository.PlaformExits(platformId))
             {
                 return NotFound();
             }
 
             var command = _repository.GetCommand(platformId, commandId);
 
-            if (command is null)
+            if(command == null)
             {
                 return NotFound();
             }
@@ -59,9 +59,9 @@ namespace CommandsController.Controllers
         [HttpPost]
         public ActionResult<CommandReadDto> CreateCommandForPlatform(int platformId, CommandCreateDto commandDto)
         {
-            Console.WriteLine($"--> Hit CreateCommandForPlatform: {platformId}");
+             Console.WriteLine($"--> Hit CreateCommandForPlatform: {platformId}");
 
-            if (!_repository.PlatformExists(platformId))
+            if (!_repository.PlaformExits(platformId))
             {
                 return NotFound();
             }
@@ -73,12 +73,8 @@ namespace CommandsController.Controllers
 
             var commandReadDto = _mapper.Map<CommandReadDto>(command);
 
-            return CreatedAtRoute(nameof(GetCommandForPlatform), 
-                                  new {
-                                      platformId, 
-                                      commandId = commandReadDto.Id
-                                  }, 
-                                  commandReadDto);
+            return CreatedAtRoute(nameof(GetCommandForPlatform),
+                new {platformId = platformId, commandId = commandReadDto.Id}, commandReadDto);
         }
 
     }
