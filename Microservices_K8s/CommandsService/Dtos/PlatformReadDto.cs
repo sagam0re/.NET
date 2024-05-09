@@ -1,9 +1,8 @@
 namespace CommandsService.Dtos
 {
-    public class PlatformReadDto
+    public class PlatformreadDto
     {
-        public string Id { get; set; }
-
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }
