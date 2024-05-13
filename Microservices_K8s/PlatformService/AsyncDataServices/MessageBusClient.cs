@@ -51,7 +51,7 @@ namespace PlatformService.AsyncDataServices
             else
             {
                 Console.WriteLine("--> RabbitMQ connectionis closed, not sending");
-            }
+            }   
         }
 
         private void SendMessage(string message)
