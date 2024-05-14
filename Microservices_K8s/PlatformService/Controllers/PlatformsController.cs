@@ -11,7 +11,7 @@ using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PlatformsController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace PlatformService.Controllers
         private readonly IMessageBusClient _messageBusClient;
 
         public PlatformsController(
-            IPlatformRepo repository,
+            IPlatformRepo repository, 
             IMapper mapper,
             ICommandDataClient commandDataClient,
             IMessageBusClient messageBusClient)
@@ -68,7 +68,7 @@ namespace PlatformService.Controllers
             {
                 await _commandDataClient.SendPlatformToCommand(platformReadDto);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
             }
@@ -85,7 +85,7 @@ namespace PlatformService.Controllers
                 Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
             }
 
-            return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id }, platformReadDto);
+            return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id}, platformReadDto);
         }
     }
 }
