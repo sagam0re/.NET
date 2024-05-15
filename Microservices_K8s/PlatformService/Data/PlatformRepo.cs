@@ -1,7 +1,7 @@
-using PlatformService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PlatformService.Models;
 
 namespace PlatformService.Data
 {
@@ -14,13 +14,14 @@ namespace PlatformService.Data
             _context = context;
         }
 
-        public void CreatePlatform(Platform platform)
+        public void CreatePlatform(Platform plat)
         {
-            if (platform is null)
+            if(plat == null)
             {
-                throw new ArgumentNullException(nameof(platform));
+                throw new ArgumentNullException(nameof(plat));
             }
-            _context.Platforms.Add(platform);
+
+            _context.Platforms.Add(plat);
         }
 
         public IEnumerable<Platform> GetAllPlatforms()
