@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using PlatformService.Data;
-using PlatformService.SyncDataServices;
-using PlatformService.SyncDataServices.Http;
 using PlatformService.AsyncDataServices;
+using PlatformService.Data;
+using PlatformService.SyncDataServices.Grpc;
+using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService
 {
@@ -30,27 +32,27 @@ namespace PlatformService
             _env = env;
         }
 
+
         public void ConfigureServices(IServiceCollection services)
         {
             if (_env.IsProduction())
             {
-                Console.WriteLine("--> Using SqlServer DB");
-
+                Console.WriteLine("--> Using SqlServer Db");
                 services.AddDbContext<AppDbContext>(opt =>
                     opt.UseSqlServer(Configuration.GetConnectionString("PlatformsConn")));
             }
             else
             {
-                Console.WriteLine("--> Using InMem DB");
+                Console.WriteLine("--> Using InMem Db");
                 services.AddDbContext<AppDbContext>(opt =>
-                    opt.UseInMemoryDatabase("InMem"));
+                     opt.UseInMemoryDatabase("InMem"));
             }
 
             services.AddScoped<IPlatformRepo, PlatformRepo>();
 
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
-
+            services.AddGrpc();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
@@ -59,7 +61,9 @@ namespace PlatformService
             });
 
             Console.WriteLine($"--> CommandService Endpoint {Configuration["CommandService"]}");
+
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -79,9 +83,17 @@ namespace PlatformService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<GrpcPlatformService>();
+
+                endpoints.MapGet("/protos/platforms.proto", async context =>
+                {
+                    await context.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+                });
             });
 
-            PrepDb.PrepPopulation(app, _env.IsProduction());
+
+            PrepDb.PrepPopulation(app, env.IsProduction());
+
         }
     }
 }
