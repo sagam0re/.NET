@@ -11,7 +11,7 @@ namespace Tests
         private readonly Command _sut = new();
 
         [Fact]
-        public void Coomand_ShouldHave_AllTheRequiredProperties()
+        public void Command_ShouldHave_AllTheRequiredProperties()
         {
             Command expected = new()
             {
