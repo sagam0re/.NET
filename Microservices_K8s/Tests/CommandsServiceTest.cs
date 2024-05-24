@@ -22,6 +22,10 @@ namespace Tests
             };
 
             expected.Should().BeEquivalentTo(new Command() { Id = 1, HowTo = "", CommandLine = "", PlatformId = 1 });
+            expected.CommandLine.Should().NotBeNull();
+            expected.Id.Should().BePositive();
+            expected.HowTo.Should().NotBeNull();
+            expected.PlatformId.Should().BePositive();
         }
     }
 }
