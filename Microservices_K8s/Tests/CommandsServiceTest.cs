@@ -6,6 +6,8 @@ using CommandsService.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -25,6 +27,7 @@ namespace Tests
             var configuration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Command, CommandReadDto>();
+                cfg.CreateMap<CommandCreateDto, Command>();
             });
             _mapper = configuration.CreateMapper();
 
@@ -135,7 +138,7 @@ namespace Tests
             };
             // Arrange
             _commandRepo.PlaformExits(1).Returns(true);
-            _commandRepo.GetCommand(1,1).Returns(command);
+            _commandRepo.GetCommand(1, 1).Returns(command);
 
             // Act
             var result = _sut.GetCommandForPlatform(1, 1);
@@ -144,6 +147,52 @@ namespace Tests
             result.Result.Should().BeOfType<OkObjectResult>();
             var okResult = result.Result as OkObjectResult;
             okResult.Value.Should().BeAssignableTo<CommandReadDto>();
+        }
+
+        // CreateCommandForPlatform
+        [Fact]
+        public void CreateCommandForPlatform_ShouldReturnNotFound_WhenPlatformDoesNotExist()
+        {
+            // Arrange
+            var command = new CommandCreateDto { HowTo = "How to do something", CommandLine = "dotnet run" };
+            _commandRepo.PlaformExits(1).Returns(false);
+
+            // Act
+            var result = _sut.CreateCommandForPlatform(1, command);
+
+            // Assert
+            result.Result.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public void CreateCommandForPlatform_ShouldReturnCreatedAtRoute_WhenCommandIsCreated()
+        {
+            // Arrange
+            _commandRepo.PlaformExits(1).Returns(true);
+            var commandCreateDto = new CommandCreateDto { HowTo = "Do something", CommandLine = "dotnet run" };
+            var command = new Command { Id = 1, HowTo = "Do something", CommandLine = "dotnet run" };
+            _commandRepo.When(x => x.CreateCommand(1, Arg.Any<Command>()))
+                        .Do(callInfo =>
+                        {
+                            var cmd = callInfo.Arg<Command>();
+                            cmd.Id = command.Id;
+                        });
+            _commandRepo.SaveChanges().Returns(true);
+
+            // Act
+            var result = _sut.CreateCommandForPlatform(1, commandCreateDto);
+
+            // Assert
+            result.Result.Should().BeOfType<CreatedAtRouteResult>();
+            var createdAtRouteResult = result.Result as CreatedAtRouteResult;
+            createdAtRouteResult.RouteName.Should().Be(nameof(_sut.GetCommandForPlatform));
+            createdAtRouteResult.RouteValues["platformId"].Should().Be(1);
+            createdAtRouteResult.RouteValues["commandId"].Should().Be(1);
+            var commandReadDto = createdAtRouteResult.Value as CommandReadDto;
+            commandReadDto.Should().NotBeNull();
+            commandReadDto.Id.Should().Be(1);
+            commandReadDto.HowTo.Should().Be("Do something");
+            commandReadDto.CommandLine.Should().Be("dotnet run");
         }
     }
 }
