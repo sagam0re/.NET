@@ -16,17 +16,16 @@ namespace Tests
 {
     public class CommandsServiceTest
     {
-        private readonly ICommandRepo _commandRepo;
-        private readonly IMapper _mapper;
+        private readonly ICommandRepo _commandRepo = Substitute.For<ICommandRepo>();
+        private readonly IMapper _mapper = Substitute.For<IMapper>();
         private readonly CommandsController _sut;
 
         public CommandsServiceTest()
         {
-            _commandRepo = Substitute.For<ICommandRepo>();
-
             var configuration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Command, CommandReadDto>();
+                cfg.CreateMap<CommandReadDto, Command>();
                 cfg.CreateMap<CommandCreateDto, Command>();
             });
             _mapper = configuration.CreateMapper();
