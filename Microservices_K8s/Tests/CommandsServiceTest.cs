@@ -6,15 +6,14 @@ using CommandsService.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
 namespace Tests
 {
-    public class CommandsServiceTest : IClassFixture<ClassFixture>
+    [Collection("TestCollectionFixture")] // Allows Data Sharing with different Test Clases, But blocks Parralel exicution
+    public class CommandsServiceTest
     {
         private readonly ICommandRepo _commandRepo = Substitute.For<ICommandRepo>();
         private readonly IMapper _mapper = Substitute.For<IMapper>();
@@ -77,8 +76,8 @@ namespace Tests
             // Arrange
             var commands = new List<Command>
             {
-                new Command { Id = 1, HowTo = "How to do something", CommandLine = "dotnet run" },
-                new Command { Id = 2, HowTo = "How to do another thing", CommandLine = "dotnet build" }
+                new Command { Id = _fixture.CommandId, HowTo = "How to do something", CommandLine = "dotnet run" },
+                new Command { Id = _fixture.CommandId, HowTo = "How to do another thing", CommandLine = "dotnet build" }
             };
 
             _commandRepo.PlaformExits(_fixture.PlatformId).Returns(true);
@@ -131,7 +130,7 @@ namespace Tests
 
             Command command = new()
             {
-                Id = 1,
+                Id = _fixture.CommandId,
                 HowTo = "Do something",
                 PlatformId = 1,
                 CommandLine = "dotnet run",
@@ -170,7 +169,7 @@ namespace Tests
             // Arrange
             _commandRepo.PlaformExits(_fixture.PlatformId).Returns(true);
             var commandCreateDto = new CommandCreateDto { HowTo = "Do something", CommandLine = "dotnet run" };
-            var command = new Command { Id = 1, HowTo = "Do something", CommandLine = "dotnet run" };
+            var command = new Command { Id = _fixture.CommandId, HowTo = "Do something", CommandLine = "dotnet run" };
             _commandRepo.When(x => x.CreateCommand(_fixture.PlatformId, Arg.Any<Command>()))
                         .Do(callInfo =>
                         {
@@ -195,4 +194,5 @@ namespace Tests
             commandReadDto.CommandLine.Should().Be("dotnet run");
         }
     }
+
 }
