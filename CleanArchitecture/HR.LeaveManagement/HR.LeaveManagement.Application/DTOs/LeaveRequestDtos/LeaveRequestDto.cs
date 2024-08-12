@@ -1,8 +1,8 @@
 ﻿using System;
+using HR.LeaveManagement.Application.DTOs;
 using HR.LeaveManagement.Application.DTOs.Common;
-using HR.LeaveManagement.Domain;
 
-namespace HR.LeaveManagement.Application.DTOs
+namespace HR.LeaveManagement.Application.LeaveRequestDtos
 {
     public class LeaveRequestDto : BaseDto
     {
