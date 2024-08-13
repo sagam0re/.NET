@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using HR.LeaveManagement.Application.LeaveRequestDtos;
+using HR.LeaveManagement.Application.DTOs.LeaveRequestDtos;
 using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries
