@@ -17,4 +17,5 @@ namespace HR.LeaveManagement.Domain
         public bool? Approved { get; set; }
         public bool Cancelled { get; set; }
     }
+    
 }
